@@ -508,18 +508,11 @@ export const GetQuestionnaireDocument = gql`
     id
     title
     questions {
-      index
-      type
-      text
-      answers {
-        index
-        value
-        reject
-      }
+      ...QuestionParts
     }
   }
 }
-    `;
+    ${QuestionPartsFragmentDoc}`;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
 
