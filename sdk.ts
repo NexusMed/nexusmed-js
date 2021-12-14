@@ -381,6 +381,10 @@ export enum WeightUnit {
   Kilograms = 'kilograms'
 }
 
+export type QuestionPartsFragment = { __typename?: 'Question', index: number, type: QuestionType, text: string, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined };
+
+export type AnswerPartsFragment = { __typename?: 'Answer', index: number, value: string, reject: boolean };
+
 export type CreateConsultationMutationVariables = Exact<{
   input: CreateConsultationInput;
 }>;
@@ -407,7 +411,7 @@ export type AnswerQuestionnaireMutationVariables = Exact<{
 }>;
 
 
-export type AnswerQuestionnaireMutation = { __typename?: 'Mutation', answerQuestionnaire?: { __typename?: 'QuestionnaireAnswers', id: string, answers: Array<{ __typename?: 'QuestionnaireAnswer', value: Array<string>, question: { __typename?: 'Question', text: string } }> } | null | undefined };
+export type AnswerQuestionnaireMutation = { __typename?: 'Mutation', answerQuestionnaire?: { __typename?: 'QuestionnaireAnswers', id: string, answers: Array<{ __typename?: 'QuestionnaireAnswer', value: Array<string>, question: { __typename?: 'Question', index: number, type: QuestionType, text: string, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined } }> } | null | undefined };
 
 export type GetPatientQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -423,7 +427,23 @@ export type GetQuestionnaireQueryVariables = Exact<{
 
 export type GetQuestionnaireQuery = { __typename?: 'Query', getQuestionnaire?: { __typename?: 'Questionnaire', id: string, title?: string | null | undefined, questions: Array<{ __typename?: 'Question', index: number, type: QuestionType, text: string, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined }> } | null | undefined };
 
-
+export const AnswerPartsFragmentDoc = gql`
+    fragment AnswerParts on Answer {
+  index
+  value
+  reject
+}
+    `;
+export const QuestionPartsFragmentDoc = gql`
+    fragment QuestionParts on Question {
+  index
+  type
+  text
+  answers {
+    ...AnswerParts
+  }
+}
+    ${AnswerPartsFragmentDoc}`;
 export const CreateConsultationDocument = gql`
     mutation CreateConsultation($input: CreateConsultationInput!) {
   createConsultation(input: $input) {
@@ -444,31 +464,24 @@ export const CreateQuestionnaireDocument = gql`
     id
     title
     questions {
-      index
-      type
-      text
-      answers {
-        index
-        value
-        reject
-      }
+      ...QuestionParts
     }
   }
 }
-    `;
+    ${QuestionPartsFragmentDoc}`;
 export const AnswerQuestionnaireDocument = gql`
     mutation AnswerQuestionnaire($input: AnswerQuestionnaireInput!) {
   answerQuestionnaire(input: $input) {
     id
     answers {
       question {
-        text
+        ...QuestionParts
       }
       value
     }
   }
 }
-    `;
+    ${QuestionPartsFragmentDoc}`;
 export const GetPatientDocument = gql`
     query GetPatient($id: ID!) {
   getPatient(id: $id) {
