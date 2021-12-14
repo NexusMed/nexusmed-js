@@ -21,11 +21,6 @@ export type Scalars = {
   AWSTimestamp: any;
 };
 
-/**
- *  ##################
- *  Personal details
- * ##################
- */
 export type Address = {
   __typename?: 'Address';
   city?: Maybe<Scalars['String']>;
@@ -44,14 +39,13 @@ export type AddressInput = {
 export type Answer = {
   __typename?: 'Answer';
   index: Scalars['Int'];
-  reject?: Maybe<Scalars['Boolean']>;
+  reject: Scalars['Boolean'];
   value: Scalars['String'];
 };
 
 export type AnswerInput = {
-  index?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
-  question_index: Scalars['Int'];
-  value?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  choice?: InputMaybe<Array<InputMaybe<Scalars['Int']>>>;
+  text?: InputMaybe<Scalars['String']>;
 };
 
 export type AnswerQuestionnaireInput = {
@@ -60,35 +54,14 @@ export type AnswerQuestionnaireInput = {
   questionnaire_id: Scalars['ID'];
 };
 
-export type Answers = {
-  __typename?: 'Answers';
-  answers: Array<Answer>;
-  id: Scalars['ID'];
-  patient_id: Scalars['ID'];
-  questionnaire_id: Scalars['ID'];
-};
-
-/**
- *  ###############
- *  Consultations
- * ###############
- */
 export type Consultation = {
   __typename?: 'Consultation';
-  /**   answers can be re-used */
-  answers_id: Scalars['ID'];
-  /**   the prescriber assigned */
   assigned?: Maybe<Prescriber>;
-  /**   the consultation events */
   events?: Maybe<Array<Maybe<ConsultationEvent>>>;
   id: Scalars['ID'];
-  /**   the patient */
   patient_id: Scalars['ID'];
-  /**   the requested prescription items */
-  products: Array<Maybe<Scalars['ID']>>;
-  /**   the questionnaire */
-  questionnaire_id: Scalars['ID'];
-  /**   the current status */
+  product_id: Scalars['ID'];
+  questionnaire_answers_id: Scalars['ID'];
   status?: Maybe<ConsultationStatus>;
 };
 
@@ -119,15 +92,13 @@ export enum Courier {
 }
 
 export type CreateAnswer = {
-  index: Scalars['Int'];
   reject?: InputMaybe<Scalars['Boolean']>;
-  value?: InputMaybe<Scalars['String']>;
+  value: Scalars['String'];
 };
 
 export type CreateConsultationInput = {
-  answers?: InputMaybe<Array<AnswerInput>>;
-  products?: InputMaybe<Array<Scalars['ID']>>;
-  questionnaire_id?: InputMaybe<Scalars['ID']>;
+  product_id: Scalars['ID'];
+  questionnaire_answers_id: Scalars['ID'];
 };
 
 export type CreatePatientInput = {
@@ -137,11 +108,6 @@ export type CreatePatientInput = {
   phone?: InputMaybe<Scalars['AWSPhone']>;
 };
 
-/**
- *  ##########
- *  Payments
- * ##########
- */
 export type CreatePaymentInput = {
   consultation_id: Scalars['ID'];
   integration: PaymentIntegration;
@@ -175,7 +141,7 @@ export type Medication = {
 export type Mutation = {
   __typename?: 'Mutation';
   /**   answer a current questionnaire */
-  answerQuestionnaire?: Maybe<Answers>;
+  answerQuestionnaire?: Maybe<QuestionnaireAnswers>;
   /**   create a new consultation */
   createConsultation?: Maybe<Consultation>;
   /**   create a new patient */
@@ -320,26 +286,16 @@ export type QueryGetQuestionnaireArgs = {
   id: Scalars['ID'];
 };
 
-/**
- *  #########################
- *  Questionnaires and answers
- * #########################
- */
 export type Question = {
   __typename?: 'Question';
   answers?: Maybe<Array<Answer>>;
   index: Scalars['Int'];
-  info?: Maybe<Scalars['String']>;
-  required: Scalars['Boolean'];
   text: Scalars['String'];
   type: QuestionType;
 };
 
 export type QuestionInput = {
-  answers: Array<CreateAnswer>;
-  index: Scalars['Int'];
-  info?: InputMaybe<Scalars['String']>;
-  required: Scalars['Boolean'];
+  answers?: InputMaybe<Array<CreateAnswer>>;
   text: Scalars['String'];
   type: QuestionType;
 };
@@ -347,7 +303,6 @@ export type QuestionInput = {
 export enum QuestionType {
   FreeText = 'free_text',
   ManyOfMany = 'many_of_many',
-  Numeric = 'numeric',
   OneOfMany = 'one_of_many'
 }
 
@@ -358,12 +313,25 @@ export type Questionnaire = {
   title?: Maybe<Scalars['String']>;
 };
 
+export type QuestionnaireAnswer = {
+  __typename?: 'QuestionnaireAnswer';
+  question: Question;
+  value: Array<Scalars['String']>;
+};
+
+export type QuestionnaireAnswers = {
+  __typename?: 'QuestionnaireAnswers';
+  answers: Array<QuestionnaireAnswer>;
+  id: Scalars['ID'];
+  patient_id: Scalars['ID'];
+  questionnaire_id: Scalars['ID'];
+};
+
 export type Rx = {
   __typename?: 'Rx';
   dosage: Dosage;
   medication: Medication;
   quantity: Scalars['Int'];
-  repeat?: Maybe<Scalars['Boolean']>;
   usage: Usage;
 };
 
@@ -432,14 +400,14 @@ export type CreateQuestionnaireMutationVariables = Exact<{
 }>;
 
 
-export type CreateQuestionnaireMutation = { __typename?: 'Mutation', createQuestionnaire?: { __typename?: 'Questionnaire', id: string } | null | undefined };
+export type CreateQuestionnaireMutation = { __typename?: 'Mutation', createQuestionnaire?: { __typename?: 'Questionnaire', id: string, title?: string | null | undefined, questions: Array<{ __typename?: 'Question', index: number, type: QuestionType, text: string, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined }> } | null | undefined };
 
 export type AnswerQuestionnaireMutationVariables = Exact<{
   input: AnswerQuestionnaireInput;
 }>;
 
 
-export type AnswerQuestionnaireMutation = { __typename?: 'Mutation', answerQuestionnaire?: { __typename?: 'Answers', id: string } | null | undefined };
+export type AnswerQuestionnaireMutation = { __typename?: 'Mutation', answerQuestionnaire?: { __typename?: 'QuestionnaireAnswers', id: string, answers: Array<{ __typename?: 'QuestionnaireAnswer', value: Array<string>, question: { __typename?: 'Question', text: string } }> } | null | undefined };
 
 export type GetPatientQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -453,7 +421,7 @@ export type GetQuestionnaireQueryVariables = Exact<{
 }>;
 
 
-export type GetQuestionnaireQuery = { __typename?: 'Query', getQuestionnaire?: { __typename?: 'Questionnaire', id: string, title?: string | null | undefined, questions: Array<{ __typename?: 'Question', index: number, type: QuestionType, text: string, required: boolean, info?: string | null | undefined, answers?: Array<{ __typename?: 'Answer', index: number, value: string }> | null | undefined }> } | null | undefined };
+export type GetQuestionnaireQuery = { __typename?: 'Query', getQuestionnaire?: { __typename?: 'Questionnaire', id: string, title?: string | null | undefined, questions: Array<{ __typename?: 'Question', index: number, type: QuestionType, text: string, answers?: Array<{ __typename?: 'Answer', index: number, value: string }> | null | undefined }> } | null | undefined };
 
 
 export const CreateConsultationDocument = gql`
@@ -474,6 +442,17 @@ export const CreateQuestionnaireDocument = gql`
     mutation CreateQuestionnaire($input: CreateQuestionnaireInput!) {
   createQuestionnaire(input: $input) {
     id
+    title
+    questions {
+      index
+      type
+      text
+      answers {
+        index
+        value
+        reject
+      }
+    }
   }
 }
     `;
@@ -481,6 +460,12 @@ export const AnswerQuestionnaireDocument = gql`
     mutation AnswerQuestionnaire($input: AnswerQuestionnaireInput!) {
   answerQuestionnaire(input: $input) {
     id
+    answers {
+      question {
+        text
+      }
+      value
+    }
   }
 }
     `;
@@ -513,8 +498,6 @@ export const GetQuestionnaireDocument = gql`
       index
       type
       text
-      required
-      info
       answers {
         index
         value
