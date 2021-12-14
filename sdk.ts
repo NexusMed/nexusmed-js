@@ -421,7 +421,7 @@ export type GetQuestionnaireQueryVariables = Exact<{
 }>;
 
 
-export type GetQuestionnaireQuery = { __typename?: 'Query', getQuestionnaire?: { __typename?: 'Questionnaire', id: string, title?: string | null | undefined, questions: Array<{ __typename?: 'Question', index: number, type: QuestionType, text: string, answers?: Array<{ __typename?: 'Answer', index: number, value: string }> | null | undefined }> } | null | undefined };
+export type GetQuestionnaireQuery = { __typename?: 'Query', getQuestionnaire?: { __typename?: 'Questionnaire', id: string, title?: string | null | undefined, questions: Array<{ __typename?: 'Question', index: number, type: QuestionType, text: string, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined }> } | null | undefined };
 
 
 export const CreateConsultationDocument = gql`
@@ -501,6 +501,7 @@ export const GetQuestionnaireDocument = gql`
       answers {
         index
         value
+        reject
       }
     }
   }
