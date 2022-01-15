@@ -5,24 +5,29 @@ import dts from 'rollup-plugin-dts'
 
 import pkg from './package.json'
 
-export default {
-  input: './index.ts',
-  output: [
-    {
-      file: pkg.main,
-      format: 'cjs',
-      sourcemap: true,
-    },
-    {
-      file: pkg.module,
-      format: "esm",
-      sourcemap: true
-    }
-  ],
-  plugins: [
-    resolve(),
-    commonjs(),
-    typescript({ useTsconfigDeclarationDir: true }),
-    dts()
-  ],
-}
+export default [
+  {
+    input: './index.ts',
+    output: [
+      {
+        file: pkg.main,
+        format: 'cjs',
+        sourcemap: true,
+      },
+      {
+        file: pkg.module,
+        format: "esm",
+        sourcemap: true
+      }
+    ],
+    plugins: [
+      resolve(),
+      commonjs(),
+      typescript({ useTsconfigDeclarationDir: true })
+    ],
+  },
+  {
+    input: './index.ts',
+    plugins: [dts()]
+  }
+]
