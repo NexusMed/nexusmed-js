@@ -4,7 +4,7 @@
   "description": "JavaScript SDK for the Nexusmed API",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/dts/index.d.ts",
   "repository": "git@github.com:NexusMed/nexusmed-js.git",
   "scripts": {
     "test": "jest --passWithNoTests",
@@ -34,6 +34,7 @@
     "jest": "^27.4.7",
     "rollup": "^2.64.0",
     "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-dts": "^4.1.0",
     "rollup-plugin-typescript2": "^0.31.1",
     "typescript": "^4.5.4"
   }
