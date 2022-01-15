@@ -1,1 +1,1 @@
-# nexusmed-ts
+# nexusmed-js
