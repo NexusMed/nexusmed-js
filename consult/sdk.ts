@@ -246,7 +246,9 @@ export type Questionnaire = {
 
 export type QuestionnaireAnswer = {
   __typename?: 'QuestionnaireAnswer';
+  choice?: Maybe<Array<Maybe<Scalars['Int']>>>;
   question: Question;
+  text?: Maybe<Scalars['String']>;
   value: Array<Scalars['String']>;
 };
 
@@ -294,7 +296,7 @@ export type CreateConsultationMutationVariables = Exact<{
 }>;
 
 
-export type CreateConsultationMutation = { __typename?: 'Mutation', createConsultation?: { __typename: 'AsynchronousConsultation', id: string, status: ConsultationStatus, patient: { __typename?: 'Patient', id: string }, products: Array<{ __typename?: 'Cosmetic', id: string } | { __typename?: 'MedicalDevice', id: string } | { __typename?: 'MedicinalProduct', id: string } | { __typename?: 'Supplement', id: string }>, questionnaire_answers: { __typename?: 'QuestionnaireAnswers', id: string } } | null | undefined };
+export type CreateConsultationMutation = { __typename?: 'Mutation', createConsultation?: { __typename: 'AsynchronousConsultation', id: string, status: ConsultationStatus, patient: { __typename?: 'Patient', id: string }, products: Array<{ __typename?: 'Cosmetic' } | { __typename?: 'MedicalDevice' } | { __typename?: 'MedicinalProduct', id: string } | { __typename?: 'Supplement' }>, questionnaire_answers: { __typename?: 'QuestionnaireAnswers', id: string } } | null | undefined };
 
 export type CreateQuestionnaireMutationVariables = Exact<{
   input: CreateQuestionnaireInput;
@@ -345,7 +347,9 @@ export const CreateConsultationDocument = gql`
       }
       status
       products {
-        id
+        ... on MedicinalProduct {
+          id
+        }
       }
       questionnaire_answers {
         id
