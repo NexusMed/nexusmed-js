@@ -55,12 +55,14 @@ export enum ConsultationInputType {
 
 export enum ConsultationStatus {
   Abandoned = 'abandoned',
+  Accepted = 'accepted',
   Assigned = 'assigned',
   Cancelled = 'cancelled',
   Completed = 'completed',
   Confirmed = 'confirmed',
   Expired = 'expired',
   Pending = 'pending',
+  Rejected = 'rejected',
   Started = 'started',
   Unassigned = 'unassigned'
 }
