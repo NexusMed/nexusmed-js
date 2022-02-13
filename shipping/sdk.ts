@@ -26,7 +26,7 @@ export type Address = {
 };
 
 export type AddressInput = {
-  city?: InputMaybe<Scalars['String']>;
+  city: Scalars['String'];
   line1: Scalars['String'];
   line2?: InputMaybe<Scalars['String']>;
   postal_code: Scalars['String'];
@@ -126,6 +126,7 @@ export type Shipment = {
 };
 
 export enum ShipmentStatus {
+  Collected = 'collected',
   Confirmed = 'confirmed',
   Delivered = 'delivered',
   EnRoute = 'en_route',

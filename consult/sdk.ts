@@ -221,6 +221,7 @@ export type Question = {
   __typename?: 'Question';
   answers?: Maybe<Array<Answer>>;
   index: Scalars['Int'];
+  info?: Maybe<Array<Maybe<Scalars['String']>>>;
   required?: Maybe<Scalars['Boolean']>;
   text: Scalars['String'];
   type: QuestionType;
@@ -228,6 +229,7 @@ export type Question = {
 
 export type QuestionInput = {
   answers?: InputMaybe<Array<CreateAnswer>>;
+  info?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   text: Scalars['String'];
   type: QuestionType;
 };
@@ -289,7 +291,7 @@ export type Supplement = Product & {
   id: Scalars['ID'];
 };
 
-export type QuestionPartsFragment = { __typename?: 'Question', index: number, type: QuestionType, text: string, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined };
+export type QuestionPartsFragment = { __typename?: 'Question', index: number, type: QuestionType, text: string, info?: Array<string | null | undefined> | null | undefined, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined };
 
 export type AnswerPartsFragment = { __typename?: 'Answer', index: number, value: string, reject: boolean };
 
@@ -305,21 +307,21 @@ export type CreateQuestionnaireMutationVariables = Exact<{
 }>;
 
 
-export type CreateQuestionnaireMutation = { __typename?: 'Mutation', createQuestionnaire?: { __typename?: 'Questionnaire', id: string, title?: string | null | undefined, questions: Array<{ __typename?: 'Question', index: number, type: QuestionType, text: string, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined }> } | null | undefined };
+export type CreateQuestionnaireMutation = { __typename?: 'Mutation', createQuestionnaire?: { __typename?: 'Questionnaire', id: string, title?: string | null | undefined, questions: Array<{ __typename?: 'Question', index: number, type: QuestionType, text: string, info?: Array<string | null | undefined> | null | undefined, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined }> } | null | undefined };
 
 export type AnswerQuestionnaireMutationVariables = Exact<{
   input: AnswerQuestionnaireInput;
 }>;
 
 
-export type AnswerQuestionnaireMutation = { __typename?: 'Mutation', answerQuestionnaire?: { __typename?: 'QuestionnaireAnswers', id: string, created_at?: any | null | undefined, answers: Array<{ __typename?: 'QuestionnaireAnswer', value: Array<string>, question: { __typename?: 'Question', index: number, type: QuestionType, text: string, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined } }>, questionnaire: { __typename?: 'Questionnaire', id: string } } | null | undefined };
+export type AnswerQuestionnaireMutation = { __typename?: 'Mutation', answerQuestionnaire?: { __typename?: 'QuestionnaireAnswers', id: string, created_at?: any | null | undefined, answers: Array<{ __typename?: 'QuestionnaireAnswer', value: Array<string>, question: { __typename?: 'Question', index: number, type: QuestionType, text: string, info?: Array<string | null | undefined> | null | undefined, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined } }>, questionnaire: { __typename?: 'Questionnaire', id: string } } | null | undefined };
 
 export type GetQuestionnaireQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetQuestionnaireQuery = { __typename?: 'Query', getQuestionnaire?: { __typename?: 'Questionnaire', id: string, title?: string | null | undefined, questions: Array<{ __typename?: 'Question', index: number, type: QuestionType, text: string, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined }> } | null | undefined };
+export type GetQuestionnaireQuery = { __typename?: 'Query', getQuestionnaire?: { __typename?: 'Questionnaire', id: string, title?: string | null | undefined, questions: Array<{ __typename?: 'Question', index: number, type: QuestionType, text: string, info?: Array<string | null | undefined> | null | undefined, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined }> } | null | undefined };
 
 export const AnswerPartsFragmentDoc = gql`
     fragment AnswerParts on Answer {
@@ -333,6 +335,7 @@ export const QuestionPartsFragmentDoc = gql`
   index
   type
   text
+  info
   answers {
     ...AnswerParts
   }
