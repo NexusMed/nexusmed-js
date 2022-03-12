@@ -69,9 +69,10 @@ export enum ConsultationStatus {
   Unassigned = 'unassigned'
 }
 
-export type Cosmetic = Product & {
+export type Cosmetic = IProduct & {
   __typename?: 'Cosmetic';
   id: Scalars['ID'];
+  name: Scalars['String'];
 };
 
 export type CreateAnswer = {
@@ -91,6 +92,19 @@ export type CreateQuestionnaireInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
+export type Dosage = {
+  __typename?: 'Dosage';
+  quantity?: Maybe<Scalars['Float']>;
+  unit?: Maybe<DosageUnit>;
+};
+
+export enum DosageUnit {
+  Iu = 'iu',
+  Mcg = 'mcg',
+  Mg = 'mg',
+  Ml = 'ml'
+}
+
 export type IConsultation = {
   id: Scalars['ID'];
   patient: Patient;
@@ -98,14 +112,29 @@ export type IConsultation = {
   status: ConsultationStatus;
 };
 
-export type MedicalDevice = Product & {
-  __typename?: 'MedicalDevice';
+export type IProduct = {
   id: Scalars['ID'];
+  name: Scalars['String'];
 };
 
-export type MedicinalProduct = Product & {
+export type MedicalDevice = IProduct & {
+  __typename?: 'MedicalDevice';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
+export type Medication = {
+  __typename?: 'Medication';
+  dosage?: Maybe<Dosage>;
+  name?: Maybe<Scalars['String']>;
+  quantity?: Maybe<Scalars['Int']>;
+};
+
+export type MedicinalProduct = IProduct & {
   __typename?: 'MedicinalProduct';
   id: Scalars['ID'];
+  medication: Medication;
+  name: Scalars['String'];
 };
 
 export type Mutation = {
@@ -157,9 +186,7 @@ export type Prescriber = {
   register?: Maybe<Register>;
 };
 
-export type Product = {
-  id: Scalars['ID'];
-};
+export type Product = MedicinalProduct;
 
 export type ProductInput = {
   id: Scalars['ID'];
@@ -268,9 +295,10 @@ export enum RegisterType {
   Nmc = 'nmc'
 }
 
-export type Supplement = Product & {
+export type Supplement = IProduct & {
   __typename?: 'Supplement';
   id: Scalars['ID'];
+  name: Scalars['String'];
 };
 
 export type QuestionPartsFragment = { __typename?: 'Question', index: number, type: QuestionType, text: string, info?: Array<string | null | undefined> | null | undefined, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined };
@@ -282,7 +310,7 @@ export type CreateConsultationMutationVariables = Exact<{
 }>;
 
 
-export type CreateConsultationMutation = { __typename?: 'Mutation', createConsultation?: { __typename: 'AsynchronousConsultation', id: string, status: ConsultationStatus, patient: { __typename?: 'Patient', id: string, name?: { __typename?: 'Name', given_name?: string | null | undefined, family_name?: string | null | undefined } | null | undefined }, products: Array<{ __typename?: 'Cosmetic' } | { __typename?: 'MedicalDevice' } | { __typename?: 'MedicinalProduct', id: string } | { __typename?: 'Supplement' }>, questionnaire_answers: { __typename?: 'QuestionnaireAnswers', id: string } } | null | undefined };
+export type CreateConsultationMutation = { __typename?: 'Mutation', createConsultation?: { __typename: 'AsynchronousConsultation', id: string, status: ConsultationStatus, patient: { __typename?: 'Patient', id: string, name?: { __typename?: 'Name', given_name?: string | null | undefined, family_name?: string | null | undefined } | null | undefined }, products: Array<{ __typename?: 'MedicinalProduct', id: string, name: string, medication: { __typename?: 'Medication', name?: string | null | undefined, quantity?: number | null | undefined, dosage?: { __typename?: 'Dosage', quantity?: number | null | undefined, unit?: DosageUnit | null | undefined } | null | undefined } }>, questionnaire_answers: { __typename?: 'QuestionnaireAnswers', id: string } } | null | undefined };
 
 export type CreateQuestionnaireMutationVariables = Exact<{
   input: CreateQuestionnaireInput;
@@ -338,8 +366,19 @@ export const CreateConsultationDocument = gql`
       }
       status
       products {
-        ... on MedicinalProduct {
+        ... on IProduct {
           id
+          name
+        }
+        ... on MedicinalProduct {
+          medication {
+            name
+            dosage {
+              quantity
+              unit
+            }
+            quantity
+          }
         }
       }
       questionnaire_answers {
