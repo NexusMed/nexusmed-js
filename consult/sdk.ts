@@ -282,7 +282,7 @@ export type CreateConsultationMutationVariables = Exact<{
 }>;
 
 
-export type CreateConsultationMutation = { __typename?: 'Mutation', createConsultation?: { __typename: 'AsynchronousConsultation', id: string, status: ConsultationStatus, patient: { __typename?: 'Patient', id: string }, products: Array<{ __typename?: 'Cosmetic' } | { __typename?: 'MedicalDevice' } | { __typename?: 'MedicinalProduct', id: string } | { __typename?: 'Supplement' }>, questionnaire_answers: { __typename?: 'QuestionnaireAnswers', id: string } } | null | undefined };
+export type CreateConsultationMutation = { __typename?: 'Mutation', createConsultation?: { __typename: 'AsynchronousConsultation', id: string, status: ConsultationStatus, patient: { __typename?: 'Patient', id: string, name?: { __typename?: 'Name', given_name?: string | null | undefined, family_name?: string | null | undefined } | null | undefined }, products: Array<{ __typename?: 'Cosmetic' } | { __typename?: 'MedicalDevice' } | { __typename?: 'MedicinalProduct', id: string } | { __typename?: 'Supplement' }>, questionnaire_answers: { __typename?: 'QuestionnaireAnswers', id: string } } | null | undefined };
 
 export type CreateQuestionnaireMutationVariables = Exact<{
   input: CreateQuestionnaireInput;
@@ -331,6 +331,10 @@ export const CreateConsultationDocument = gql`
       id
       patient {
         id
+        name {
+          given_name
+          family_name
+        }
       }
       status
       products {
