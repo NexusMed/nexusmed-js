@@ -37,11 +37,13 @@ export type AnswerQuestionnaireInput = {
 
 export type AsynchronousConsultation = IConsultation & {
   __typename?: 'AsynchronousConsultation';
-  assignee?: Maybe<Prescriber>;
   id: Scalars['ID'];
   patient: Patient;
+  prescriber?: Maybe<Prescriber>;
   products: Array<Product>;
   questionnaire_answers: QuestionnaireAnswers;
+  reject_reason?: Maybe<Scalars['String']>;
+  rejected?: Maybe<Scalars['Boolean']>;
   status: ConsultationStatus;
 };
 
@@ -89,17 +91,10 @@ export type CreateQuestionnaireInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
-export type Doctor = Prescriber & {
-  __typename?: 'Doctor';
-  id: Scalars['ID'];
-  name?: Maybe<Name>;
-  register?: Maybe<Register>;
-};
-
 export type IConsultation = {
-  assignee?: Maybe<Prescriber>;
   id: Scalars['ID'];
   patient: Patient;
+  prescriber?: Maybe<Prescriber>;
   status: ConsultationStatus;
 };
 
@@ -145,13 +140,6 @@ export type Name = {
   title?: Maybe<Scalars['String']>;
 };
 
-export type Nurse = Prescriber & {
-  __typename?: 'Nurse';
-  id: Scalars['ID'];
-  name?: Maybe<Name>;
-  register?: Maybe<Register>;
-};
-
 export type Patient = {
   __typename?: 'Patient';
   id: Scalars['ID'];
@@ -162,14 +150,8 @@ export type PatientInput = {
   id: Scalars['ID'];
 };
 
-export type Pharmacist = Prescriber & {
-  __typename?: 'Pharmacist';
-  id: Scalars['ID'];
-  name?: Maybe<Name>;
-  register?: Maybe<Register>;
-};
-
 export type Prescriber = {
+  __typename?: 'Prescriber';
   id: Scalars['ID'];
   name?: Maybe<Name>;
   register?: Maybe<Register>;
