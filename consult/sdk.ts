@@ -167,6 +167,7 @@ export type Product = {
   id: Scalars['ID'];
   medication?: Maybe<Medication>;
   name: Scalars['String'];
+  quantity?: Maybe<Scalars['Int']>;
 };
 
 export type ProductInput = {
@@ -276,6 +277,8 @@ export enum RegisterType {
   Nmc = 'nmc'
 }
 
+export type AsynchronousConsultationPartsFragment = { __typename?: 'AsynchronousConsultation', id: string, status: ConsultationStatus, patient: { __typename?: 'Patient', id: string, name?: { __typename?: 'Name', given_name?: string | null | undefined, family_name?: string | null | undefined } | null | undefined }, products?: Array<{ __typename?: 'Product', id: string, name: string, medication?: { __typename?: 'Medication', name?: string | null | undefined, quantity?: number | null | undefined, dosage?: { __typename?: 'Dosage', quantity?: number | null | undefined, unit?: DosageUnit | null | undefined } | null | undefined } | null | undefined }> | null | undefined, questionnaire_answers?: { __typename?: 'QuestionnaireAnswers', id: string } | null | undefined };
+
 export type QuestionPartsFragment = { __typename?: 'Question', index: number, type: QuestionType, text: string, info?: Array<string | null | undefined> | null | undefined, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined };
 
 export type AnswerPartsFragment = { __typename?: 'Answer', index: number, value: string, reject: boolean };
@@ -301,6 +304,13 @@ export type AnswerQuestionnaireMutationVariables = Exact<{
 
 export type AnswerQuestionnaireMutation = { __typename?: 'Mutation', answerQuestionnaire?: { __typename?: 'QuestionnaireAnswers', id: string, created_at?: any | null | undefined, answers: Array<{ __typename?: 'QuestionnaireAnswer', value: Array<string>, question: { __typename?: 'Question', index: number, type: QuestionType, text: string, info?: Array<string | null | undefined> | null | undefined, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined } }>, questionnaire: { __typename?: 'Questionnaire', id: string } } | null | undefined };
 
+export type GetConsultationQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetConsultationQuery = { __typename?: 'Query', getConsultation?: { __typename?: 'AsynchronousConsultation', id: string, status: ConsultationStatus, patient: { __typename?: 'Patient', id: string, name?: { __typename?: 'Name', given_name?: string | null | undefined, family_name?: string | null | undefined } | null | undefined }, products?: Array<{ __typename?: 'Product', id: string, name: string, medication?: { __typename?: 'Medication', name?: string | null | undefined, quantity?: number | null | undefined, dosage?: { __typename?: 'Dosage', quantity?: number | null | undefined, unit?: DosageUnit | null | undefined } | null | undefined } | null | undefined }> | null | undefined, questionnaire_answers?: { __typename?: 'QuestionnaireAnswers', id: string } | null | undefined } | null | undefined };
+
 export type GetQuestionnaireQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -308,6 +318,34 @@ export type GetQuestionnaireQueryVariables = Exact<{
 
 export type GetQuestionnaireQuery = { __typename?: 'Query', getQuestionnaire?: { __typename?: 'Questionnaire', id: string, title?: string | null | undefined, questions: Array<{ __typename?: 'Question', index: number, type: QuestionType, text: string, info?: Array<string | null | undefined> | null | undefined, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined }> } | null | undefined };
 
+export const AsynchronousConsultationPartsFragmentDoc = gql`
+    fragment AsynchronousConsultationParts on AsynchronousConsultation {
+  id
+  patient {
+    id
+    name {
+      given_name
+      family_name
+    }
+  }
+  status
+  products {
+    id
+    name
+    medication {
+      name
+      dosage {
+        quantity
+        unit
+      }
+      quantity
+    }
+  }
+  questionnaire_answers {
+    id
+  }
+}
+    `;
 export const AnswerPartsFragmentDoc = gql`
     fragment AnswerParts on Answer {
   index
@@ -331,34 +369,11 @@ export const CreateConsultationDocument = gql`
   createConsultation(input: $input) {
     __typename
     ... on AsynchronousConsultation {
-      id
-      patient {
-        id
-        name {
-          given_name
-          family_name
-        }
-      }
-      status
-      products {
-        id
-        name
-        medication {
-          name
-          dosage {
-            quantity
-            unit
-          }
-          quantity
-        }
-      }
-      questionnaire_answers {
-        id
-      }
+      ...AsynchronousConsultationParts
     }
   }
 }
-    `;
+    ${AsynchronousConsultationPartsFragmentDoc}`;
 export const CreateQuestionnaireDocument = gql`
     mutation CreateQuestionnaire($input: CreateQuestionnaireInput!) {
   createQuestionnaire(input: $input) {
@@ -387,6 +402,15 @@ export const AnswerQuestionnaireDocument = gql`
   }
 }
     ${QuestionPartsFragmentDoc}`;
+export const GetConsultationDocument = gql`
+    query GetConsultation($id: ID!) {
+  getConsultation(id: $id) {
+    ... on AsynchronousConsultation {
+      ...AsynchronousConsultationParts
+    }
+  }
+}
+    ${AsynchronousConsultationPartsFragmentDoc}`;
 export const GetQuestionnaireDocument = gql`
     query GetQuestionnaire($id: ID!) {
   getQuestionnaire(id: $id) {
@@ -414,6 +438,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     AnswerQuestionnaire(variables: AnswerQuestionnaireMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AnswerQuestionnaireMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<AnswerQuestionnaireMutation>(AnswerQuestionnaireDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'AnswerQuestionnaire');
+    },
+    GetConsultation(variables: GetConsultationQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetConsultationQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetConsultationQuery>(GetConsultationDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetConsultation');
     },
     GetQuestionnaire(variables: GetQuestionnaireQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetQuestionnaireQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetQuestionnaireQuery>(GetQuestionnaireDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetQuestionnaire');
