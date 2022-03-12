@@ -40,8 +40,8 @@ export type AsynchronousConsultation = IConsultation & {
   id: Scalars['ID'];
   patient: Patient;
   prescriber?: Maybe<Prescriber>;
-  products: Array<Product>;
-  questionnaire_answers: QuestionnaireAnswers;
+  products?: Maybe<Array<Product>>;
+  questionnaire_answers?: Maybe<QuestionnaireAnswers>;
   reject_reason?: Maybe<Scalars['String']>;
   rejected?: Maybe<Scalars['Boolean']>;
   status: ConsultationStatus;
@@ -68,12 +68,6 @@ export enum ConsultationStatus {
   Started = 'started',
   Unassigned = 'unassigned'
 }
-
-export type Cosmetic = IProduct & {
-  __typename?: 'Cosmetic';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-};
 
 export type CreateAnswer = {
   reject?: InputMaybe<Scalars['Boolean']>;
@@ -112,29 +106,11 @@ export type IConsultation = {
   status: ConsultationStatus;
 };
 
-export type IProduct = {
-  id: Scalars['ID'];
-  name: Scalars['String'];
-};
-
-export type MedicalDevice = IProduct & {
-  __typename?: 'MedicalDevice';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-};
-
 export type Medication = {
   __typename?: 'Medication';
   dosage?: Maybe<Dosage>;
   name?: Maybe<Scalars['String']>;
   quantity?: Maybe<Scalars['Int']>;
-};
-
-export type MedicinalProduct = IProduct & {
-  __typename?: 'MedicinalProduct';
-  id: Scalars['ID'];
-  medication: Medication;
-  name: Scalars['String'];
 };
 
 export type Mutation = {
@@ -186,7 +162,12 @@ export type Prescriber = {
   register?: Maybe<Register>;
 };
 
-export type Product = MedicinalProduct;
+export type Product = {
+  __typename?: 'Product';
+  id: Scalars['ID'];
+  medication?: Maybe<Medication>;
+  name: Scalars['String'];
+};
 
 export type ProductInput = {
   id: Scalars['ID'];
@@ -295,12 +276,6 @@ export enum RegisterType {
   Nmc = 'nmc'
 }
 
-export type Supplement = IProduct & {
-  __typename?: 'Supplement';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-};
-
 export type QuestionPartsFragment = { __typename?: 'Question', index: number, type: QuestionType, text: string, info?: Array<string | null | undefined> | null | undefined, answers?: Array<{ __typename?: 'Answer', index: number, value: string, reject: boolean }> | null | undefined };
 
 export type AnswerPartsFragment = { __typename?: 'Answer', index: number, value: string, reject: boolean };
@@ -310,7 +285,7 @@ export type CreateConsultationMutationVariables = Exact<{
 }>;
 
 
-export type CreateConsultationMutation = { __typename?: 'Mutation', createConsultation?: { __typename: 'AsynchronousConsultation', id: string, status: ConsultationStatus, patient: { __typename?: 'Patient', id: string, name?: { __typename?: 'Name', given_name?: string | null | undefined, family_name?: string | null | undefined } | null | undefined }, products: Array<{ __typename?: 'MedicinalProduct', id: string, name: string, medication: { __typename?: 'Medication', name?: string | null | undefined, quantity?: number | null | undefined, dosage?: { __typename?: 'Dosage', quantity?: number | null | undefined, unit?: DosageUnit | null | undefined } | null | undefined } }>, questionnaire_answers: { __typename?: 'QuestionnaireAnswers', id: string } } | null | undefined };
+export type CreateConsultationMutation = { __typename?: 'Mutation', createConsultation?: { __typename: 'AsynchronousConsultation', id: string, status: ConsultationStatus, patient: { __typename?: 'Patient', id: string, name?: { __typename?: 'Name', given_name?: string | null | undefined, family_name?: string | null | undefined } | null | undefined }, products?: Array<{ __typename?: 'Product', id: string, name: string, medication?: { __typename?: 'Medication', name?: string | null | undefined, quantity?: number | null | undefined, dosage?: { __typename?: 'Dosage', quantity?: number | null | undefined, unit?: DosageUnit | null | undefined } | null | undefined } | null | undefined }> | null | undefined, questionnaire_answers?: { __typename?: 'QuestionnaireAnswers', id: string } | null | undefined } | null | undefined };
 
 export type CreateQuestionnaireMutationVariables = Exact<{
   input: CreateQuestionnaireInput;
@@ -366,19 +341,15 @@ export const CreateConsultationDocument = gql`
       }
       status
       products {
-        ... on IProduct {
-          id
+        id
+        name
+        medication {
           name
-        }
-        ... on MedicinalProduct {
-          medication {
-            name
-            dosage {
-              quantity
-              unit
-            }
+          dosage {
             quantity
+            unit
           }
+          quantity
         }
       }
       questionnaire_answers {
