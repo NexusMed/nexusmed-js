@@ -149,6 +149,7 @@ export type Patient = {
   __typename?: 'Patient';
   id: Scalars['ID'];
   name?: Maybe<Name>;
+  stripe_id?: Maybe<Scalars['String']>;
 };
 
 export type PatientInput = {

@@ -15,14 +15,12 @@ export type Scalars = {
   Float: number;
   /** The `AWSJSON` scalar type provided by AWS AppSync, represents a JSON string that complies with [RFC 8259](https://tools.ietf.org/html/rfc8259).  Maps like "**{\\"upvotes\\": 10}**", lists like "**[1,2,3]**", and scalar values like "**\\"AWSJSON example string\\"**", "**1**", and "**true**" are accepted as valid JSON and will automatically be parsed and loaded in the resolver mapping templates as Maps, Lists, or Scalar values rather than as the literal input strings.  Invalid JSON strings like "**{a: 1}**", "**{'a': 1}**" and "**Unquoted string**" will throw GraphQL validation errors. */
   AWSJSON: any;
-  /** The `AWSURL` scalar type provided by AWS AppSync, represents a valid URL string (Ex: <https://www.amazon.com/>). The URL may use any scheme and may also be a local URL (Ex: <http://localhost/>).  URLs without schemes like "**amazon.com**" or "**www.amazon.com**" are considered invalid. URLs which contain double slashes (two consecutive forward slashes) in their path are also considered invalid. */
-  AWSURL: any;
 };
 
 export type CreateEndpointInput = {
   description?: InputMaybe<Scalars['String']>;
   resources?: InputMaybe<Array<Resource>>;
-  url: Scalars['AWSURL'];
+  url: Scalars['String'];
 };
 
 export type Data = {
@@ -35,7 +33,7 @@ export type Endpoint = {
   description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   resources?: Maybe<Array<Maybe<Resource>>>;
-  url?: Maybe<Scalars['AWSURL']>;
+  url?: Maybe<Scalars['String']>;
 };
 
 export type Event = {
@@ -43,8 +41,15 @@ export type Event = {
   account_id?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['String']>;
   data?: Maybe<Data>;
+  delivered?: Maybe<Scalars['Boolean']>;
   id: Scalars['ID'];
   type?: Maybe<Scalars['String']>;
+};
+
+export type Events = {
+  __typename?: 'Events';
+  items?: Maybe<Array<Maybe<Event>>>;
+  nextToken?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -75,7 +80,7 @@ export type Query = {
   getEndpointSecret?: Maybe<Scalars['String']>;
   getEndpoints?: Maybe<Array<Maybe<Endpoint>>>;
   getEvent?: Maybe<Event>;
-  getEvents?: Maybe<Array<Maybe<Event>>>;
+  getEvents?: Maybe<Events>;
 };
 
 
@@ -95,10 +100,9 @@ export type QueryGetEventArgs = {
 
 
 export type QueryGetEventsArgs = {
-  end?: InputMaybe<Scalars['String']>;
-  resource?: InputMaybe<Resource>;
-  start?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<Scalars['String']>;
+  ascending?: InputMaybe<Scalars['Boolean']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  nextToken?: InputMaybe<Scalars['String']>;
 };
 
 export enum Resource {
@@ -116,7 +120,7 @@ export type UpdateEndpointInput = {
   description?: InputMaybe<Scalars['String']>;
   id: Scalars['ID'];
   resources?: InputMaybe<Array<Resource>>;
-  url: Scalars['AWSURL'];
+  url: Scalars['String'];
 };
 
 export type GetEventQueryVariables = Exact<{
