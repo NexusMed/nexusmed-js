@@ -180,6 +180,7 @@ export type Query = {
   __typename?: 'Query';
   /**   query the consultation by Id */
   getConsultation?: Maybe<Consultation>;
+  getConsultsCount?: Maybe<Scalars['Int']>;
   /**   query the questionnaire by Id */
   getQuestionnaire?: Maybe<Questionnaire>;
   /**   query the questionnaire answers by Id */
